@@ -1,5 +1,5 @@
 
-import { View, Image, TouchableOpacity, Text, FlatList } from 'react-native';
+import { Alert, View, Image, TouchableOpacity, Text, FlatList } from 'react-native';
 
 import { Button } from '@/components/Button';
 import { styles } from './styles';
@@ -7,7 +7,7 @@ import { Input } from '@/components/Input';
 import { Filter } from '@/components/Filter';
 import { FilterStatus } from '@/types/FilterStatus';
 import { Item } from '@/components/Item';
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 const FILTER_STATUS: FilterStatus[] = [FilterStatus.PENDING, FilterStatus.DONE]
 const ITEMS = [
@@ -29,8 +29,30 @@ const ITEMS = [
 ]
 
 export function Home() {
+  const [items, setItems] = useState<any>([])
   const [filter, setFilter] = useState(FilterStatus.PENDING)
   const [description, setDescription] = useState("")
+
+  function handleAdd() {
+    console.log("Adicionar", description)
+    if (!description.trim()) {
+      return Alert.alert("Adicionar", "Informe a descrição para adicionar.")
+    }
+
+    const newItem = {
+      id: Math.random().toString().substring(2),
+      description,
+      status: FilterStatus.PENDING,
+    }
+
+    console.log(newItem)
+
+    setItems((prevState) => [...prevState, newItem])
+  }
+
+  useEffect(() => {
+    console.log("items", items)
+  }, [items])
   
   return (
     <View style={styles.container}>
@@ -41,7 +63,7 @@ export function Home() {
           placeholder="O que você precisa comprar?" 
           onChangeText={setDescription}
         />
-        <Button title="Entrar" />
+         <Button title="Adicionar" onPress={handleAdd} />
       </View>
 
       <View style={styles.content}>
@@ -61,11 +83,11 @@ export function Home() {
         </View>
 
          <FlatList 
-          data={ITEMS}
+          data={items}
           keyExtractor={item => item.id}
           renderItem={({ item }) => (
             <Item                       
-              data={item} 
+              data={item}
               onStatus={() => console.log("mudar o status")}
               onRemove={() => console.log("remover")}              
             />
