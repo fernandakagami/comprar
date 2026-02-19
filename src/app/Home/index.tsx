@@ -7,26 +7,9 @@ import { Input } from '@/components/Input';
 import { Filter } from '@/components/Filter';
 import { FilterStatus } from '@/types/FilterStatus';
 import { Item } from '@/components/Item';
-import { useEffect, useState } from "react"
+import { useState } from "react"
 
 const FILTER_STATUS: FilterStatus[] = [FilterStatus.PENDING, FilterStatus.DONE]
-const ITEMS = [
-  {
-    id: "1",
-    status: FilterStatus.DONE,
-    description: "1 pacote de café"
-  },
-  {
-    id: "2",
-    status: FilterStatus.PENDING,
-    description: "3 pacotes de macarrão"
-  },
-  {
-    id: "3",
-    status: FilterStatus.PENDING,
-    description: "3 cebolas"
-  },
-]
 
 export function Home() {
   const [items, setItems] = useState<any>([])
@@ -50,9 +33,6 @@ export function Home() {
     setItems((prevState) => [...prevState, newItem])
   }
 
-  useEffect(() => {
-    console.log("items", items)
-  }, [items])
   
   return (
     <View style={styles.container}>
