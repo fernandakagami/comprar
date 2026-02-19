@@ -7,17 +7,18 @@ import { Input } from '@/components/Input';
 import { Filter } from '@/components/Filter';
 import { FilterStatus } from '@/types/FilterStatus';
 import { Item } from '@/components/Item';
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { itemsStorage, ItemsStorage } from '@/storage/itemsStorage';
+
 
 const FILTER_STATUS: FilterStatus[] = [FilterStatus.PENDING, FilterStatus.DONE]
 
 export function Home() {
-  const [items, setItems] = useState<any>([])
+  const [items, setItems] = useState<ItemsStorage[]>([])
   const [filter, setFilter] = useState(FilterStatus.PENDING)
   const [description, setDescription] = useState("")
 
-  function handleAdd() {
-    console.log("Adicionar", description)
+  async function handleAdd() {    
     if (!description.trim()) {
       return Alert.alert("Adicionar", "Informe a descrição para adicionar.")
     }
@@ -28,11 +29,23 @@ export function Home() {
       status: FilterStatus.PENDING,
     }
 
-    console.log(newItem)
-
-    setItems((prevState) => [...prevState, newItem])
+    await itemsStorage.add(newItem)
+    await getItems()
   }
 
+  async function getItems () {
+    try {
+      const response = await itemsStorage.get()
+      setItems(response)
+    } catch (error) {
+      console.log(error)
+      Alert.alert("Erro", "Não foi possível filtrar os itens.")
+    }
+  }
+
+  useEffect(() => {
+    getItems()
+  }, [])
   
   return (
     <View style={styles.container}>
